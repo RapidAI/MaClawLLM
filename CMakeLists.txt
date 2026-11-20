@@ -258,6 +258,15 @@ add_executable(strata-dequant src/artifact/dequant.cpp)
 target_link_libraries(strata-dequant PRIVATE strata_artifact)
 # this file is now nothing but the CLI entry point, and its inherited guard spells that as a "selftest"
 target_compile_definitions(strata-dequant PRIVATE STRATA_DEQUANT_SELFTEST)
+
+# ---- maclaw-llm-service ----------------------------------------------------
+# Standalone NT service host. No CUDA and no Python: configured even when
+# STRATA_ENABLE_CUDA is on, and it does not link the CUDA runtime.
+add_executable(maclaw-llm-service src/service/service_main.cpp)
+target_link_libraries(maclaw-llm-service PRIVATE strata_warnings)
+if(WIN32)
+  target_link_libraries(maclaw-llm-service PRIVATE ws2_32 advapi32)
+endif()
 if(STRATA_BUILD_TESTS)
   add_executable(logit_bias_test src/core/logit_bias_test.cpp)
   target_include_directories(logit_bias_test PRIVATE include)
